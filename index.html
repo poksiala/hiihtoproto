@@ -1,0 +1,27 @@
+<html>
+  <head>
+
+  </head>
+  <body>
+    <div id="imgContainer"></div>
+
+  
+  
+  <script>
+  
+  const element = document.getElementById("imgContainer");
+
+  const clearImage = (e) => element.innerHTML = ""
+
+  const showImage = (e) =>  {
+    const imgName = (e.key === "k") ? "good.jpg" : (e.key === "j") ? "bad.jpg" : null
+    element.innerHTML = (imgName != null) ? `<img src="${imgName}" />`: ""
+  }
+
+  document.addEventListener("keydown", showImage)
+  document.addEventListener("keyup", clearImage)
+
+  </script>
+  </body>
+</html>
+
