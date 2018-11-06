@@ -5,23 +5,25 @@
   <body>
     <div id="imgContainer"></div>
 
-  
-  
-  <script>
-  
-  const element = document.getElementById("imgContainer");
 
-  const clearImage = (e) => element.innerHTML = ""
 
-  const showImage = (e) =>  {
-    const imgName = (e.key === "k") ? "good.jpg" : (e.key === "j") ? "bad.jpg" : null
-    element.innerHTML = (imgName != null) ? `<img src="${imgName}" />`: ""
-  }
+    <script>
 
-  document.addEventListener("keydown", showImage)
-  document.addEventListener("keyup", clearImage)
+      const defaultContent = '<img src="chart.jpg" />'
 
-  </script>
+      const element = document.getElementById("imgContainer");
+      
+      const clearImage = (e) => element.innerHTML = defaultContent
+      
+      const showImage = (e) =>  {
+        const imgName = (e.key === "k") ? "good.jpg" : (e.key === "j") ? "bad.jpg" : null
+        if (imgName != null) { element.innerHTML = `<img src="${imgName}" />` }
+      }
+
+    document.addEventListener("keydown", showImage)
+    document.addEventListener("keyup", clearImage)
+    clearImage()
+    </script>
   </body>
 </html>
 
