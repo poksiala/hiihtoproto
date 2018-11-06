@@ -1,28 +1,64 @@
-<html>
+<!DOCTYPE html>
+<html lang="fi">
   <head>
-
+  <title>Amppeeri | Trash.io</title>
+  <meta charset="utf-8" />
+<style>
+body {
+  background-color: #FCFCFC;
+  font-family: sans;
+}
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #46237A;
+}
+h1 { color: #3DDc97; }
+h2 { color: #46237A; }
+</style>
   </head>
   <body>
-    <div id="imgContainer"></div>
-
+    <div class="content">
+      <h1>Asunto-osakeyhtiö Amppeeri</h1>
+      <h2>trash.io/amppeeri</h2>
+      <div id="imgContainer"></div>
+      <p id="textContainer">Sekajätteen osuus on <strong>laskussa</strong>. <em>Mahtavaa!</em></p>
+    </div>
 
 
     <script>
 
-      const defaultContent = '<img src="chart.jpg" />'
+      const defaultImg = "chart.jpg"
+      const defaultText = "Sekajätteen osuus on <strong>laskussa</strong>. <em>Matavaa!</em>"
 
-      const element = document.getElementById("imgContainer");
+      const img = document.getElementById("imgContainer");
+      const text = document.getElementById("textContainer");      
       
-      const clearImage = (e) => element.innerHTML = defaultContent
-      
-      const showImage = (e) =>  {
-        const imgName = (e.key === "k") ? "good.jpg" : (e.key === "j") ? "bad.jpg" : null
-        if (imgName != null) { element.innerHTML = `<img src="${imgName}" />` }
+      const setImg = (imgName) => img.innerHTML = `<img src="${imgName}" />`;
+      const showDefaults = (e) => {
+        text.innerHTML = defaultText;
+        setImg(defaultImg);
       }
 
-    document.addEventListener("keydown", showImage)
-    document.addEventListener("keyup", clearImage)
-    clearImage()
+      const showGood = () => {
+        setImg("good.jpg");
+        text.innerHTML = "<em>Kiitos kun lajittelet jätteesi!</em>";
+      }
+
+      const showBad = () => {
+        setImg("bad.jpg");
+        text.innerHTML = "Voit lukea verkkosivuiltamme <em>trash.io</em>, kuinka sinäkin voit autaa ympäristömme pelastamisessa.";
+      }
+      
+      const handleKeyPress = (e) =>  {
+        if (e.key === "k") showGood();
+        if (e.key === "j") showBad();
+      }
+
+    document.addEventListener("keydown", handleKeyPress)
+    document.addEventListener("keyup", showDefaults)
+    showDefaults()
     </script>
   </body>
 </html>
