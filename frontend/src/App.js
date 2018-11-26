@@ -5,10 +5,13 @@ import bad1 from './img/bad1.png'
 import good2 from './img/good2.png'
 import bad2 from './img/bad2.png'
 import neutral from './img/neutral.png'
+import thanks from './audio/kiitos.ogg'
+import remember from './audio/muistathan.ogg'
 
 const WS_URL = null
 const MIXED_DELAY = 1000
 const CLEAR_DELAY = 10000
+const AUDIO_DELAY = 4000
 
 const selectRandom = (l) => l[Math.floor(Math.random() * l.length)]
 
@@ -25,38 +28,59 @@ class App extends Component {
       status: 0,
     }
     this.timeout = null
+    this.timeouts = []
     this.connection = null
     this.content = React.createRef()
   }
 
+  playAudio = (audio) => (new Audio(audio)).play()
+
+  clearTimeouts = () => {
+    this.timeouts.forEach((id) => clearTimeout(id))
+    this.timeout = []
+  }
+
+  /**
+   * Set status immediately to positive for duration of CLEAR_DELAY.
+   * Play positive audio after duration of AUDIO_DELAY.
+   */
+  startPositiveRoutine = () => {
+    this.clearTimeouts()
+    this.setState({status: 1})
+    this.timeouts = [
+      setTimeout(() => this.setState({status: 0}), CLEAR_DELAY),
+      setTimeout(() => this.playAudio(thanks), AUDIO_DELAY)
+    ]
+  }
+
+  /**
+   * Set status to negative after MIXED_DELAY for duration of CLEAR_DELAY.
+   * Play negative audio after duration of MIXED_DELAY + AUDIO_DELAY.
+   */
+  startNegativeRoutine = () => {
+    this.clearTimeouts()
+    this.timeouts = [
+      setTimeout(() => this.setState({status: -1}), MIXED_DELAY),
+      setTimeout(() => this.setState({status: 0}), MIXED_DELAY + CLEAR_DELAY),
+      setTimeout(() => this.playAudio(remember), MIXED_DELAY + AUDIO_DELAY)
+    ]
+  }
+
   /**
    * If status is neutral and bio is opened show positive.
-   * if mixed is opened show negative after MIXED_DELAY.
+   * If mixed is opened show negative after MIXED_DELAY.
    * 
    * Bio takes precedence and can replace negative status.
    */
   handleMessage = (data) => {
     if (this.state.status === 0) {
       if (data.bio) {
-        clearTimeout(this.timeout)
-        this.setState({status: 1})
-        this.timeout = setTimeout(() => this.setState({status: 0}), CLEAR_DELAY)
+        this.startPositiveRoutine()
       } else if (data.mixed) {
-        clearTimeout(this.timeout)
-        this.timeout = setTimeout(() => {
-            this.setState({status: -1})
-            this.timeout = setTimeout(() => {
-              this.setState({status: 0})
-            }, CLEAR_DELAY)
-          }, MIXED_DELAY
-        )
+        this.startNegativeRoutine()
       }
     } else if (this.state.status === -1 && data.bio) {
-      clearTimeout(this.timeout)
-      this.setState({status: 1})
-      this.timeout = setTimeout(() => {
-        this.setState({status: 0})
-      }, CLEAR_DELAY)
+      this.startPositiveRoutine()
     }
   }
 
@@ -80,7 +104,7 @@ class App extends Component {
     this.content.current.focus()
   }
 
-  selectImg() {
+  selectImg = () => {
     if (this.state.status === 0) {
       return neutral
     } else if (this.state.status === -1) {
