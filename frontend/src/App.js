@@ -6,7 +6,7 @@ import good2 from './img/good2.png'
 import bad2 from './img/bad2.png'
 import neutral from './img/neutral.png'
 
-const WS_URL = ""
+const WS_URL = null
 const MIXED_DELAY = 1000
 const CLEAR_DELAY = 10000
 
@@ -22,10 +22,11 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = { 
-      status: 1,
+      status: 0,
     }
     this.timeout = null
     this.connection = null
+    this.content = React.createRef()
   }
 
   /**
@@ -60,12 +61,24 @@ class App extends Component {
   }
 
   connect = () => {
-    this.connection = new WebSocket(WS_URL)
-    this.connection.onmessage = (evt) => this.handleMessage(evt.data)
-    this.connection.onclose = () => setTimeout(this.connect, 2000)
+    if (WS_URL) {
+      this.connection = new WebSocket(WS_URL)
+      this.connection.onmessage = (evt) => this.handleMessage(evt.data)
+      this.connection.onclose = () => setTimeout(this.connect, 2000)
+    }
   }
 
-  componentDidMount = () => this.connect()
+  handleKeyDown = (e) => {
+    this.handleMessage({
+      bio: (e.key === 'k'),
+      mixed: (e.key === 'j')
+    })
+  }
+
+  componentDidMount = () => {
+    this.connect()
+    this.content.current.focus()
+  }
 
   selectImg() {
     if (this.state.status === 0) {
@@ -79,7 +92,12 @@ class App extends Component {
 
   render() {
     return (
-      <Content img={this.selectImg()} />
+      <Content 
+        img={this.selectImg()}
+        tabIndex="0"
+        onKeyDown={this.handleKeyDown}
+        ref={this.content}
+      />
     );
   }
 }
