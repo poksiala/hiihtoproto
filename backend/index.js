@@ -15,4 +15,5 @@ const handlePinChange = (pin) => {
 PINS.forEach((id) => {
   rpio.open(id, rpio.INPUT)
   rpio.poll(id, handlePinChange, rpio.POLL_HIGH)
-}
+})
+
