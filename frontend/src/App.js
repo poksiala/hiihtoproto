@@ -8,7 +8,7 @@ import neutral from './img/neutral.png'
 import thanks from './audio/kiitos.ogg'
 import remember from './audio/muistathan.ogg'
 
-const WS_URL = null
+const WS_URL = "ws://192.168.10.98:8080"
 const MIXED_DELAY = 1000
 const CLEAR_DELAY = 10000
 const AUDIO_DELAY = 4000
@@ -73,6 +73,7 @@ class App extends Component {
    * Bio takes precedence and can replace negative status.
    */
   handleMessage = (data) => {
+    console.log(data)
     if (this.state.status === 0) {
       if (data.bio) {
         this.startPositiveRoutine()
@@ -86,8 +87,8 @@ class App extends Component {
 
   connect = () => {
     if (WS_URL) {
-      this.connection = new WebSocket(WS_URL)
-      this.connection.onmessage = (evt) => this.handleMessage(evt.data)
+      this.connection = new WebSocket(WS_URL, 'echo-protocol')
+      this.connection.onmessage = (evt) => this.handleMessage(JSON.parse(evt.data))
       this.connection.onclose = () => setTimeout(this.connect, 2000)
     }
   }
