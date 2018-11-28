@@ -40,6 +40,7 @@ const handlePinChange = (pin) => {
     const payload = {}
     payload[name] = state
     console.log(name, state, payload)
+    clients.forEach((c) => c.send(JSON.stringify(payload)))
 }
 
 PINS.forEach((id) => {
